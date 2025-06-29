@@ -162,7 +162,8 @@ class AlgorandBlockchainService {
   async getAccountBalance(): Promise<number> {
     try {
       const accountInfo = await this.algodClient.accountInformation(this.account.addr).do();
-      return accountInfo.amount / 1000000; // Convert microAlgos to Algos
+      // Fix: Convert BigInt to Number before division
+      return Number(accountInfo.amount) / 1000000; // Convert microAlgos to Algos
     } catch (error) {
       console.error('Error getting account balance:', error);
       return 0;
