@@ -11,12 +11,15 @@ import {
   Building2,
   Filter,
   Search,
-  Eye
+  Eye,
+  Shield,
+  Hash
 } from 'lucide-react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { BlockchainVerification } from './BlockchainVerification';
 import { Document, getDocumentUrl, deleteDocument, formatFileSize } from '../../lib/documents';
 import toast from 'react-hot-toast';
 
@@ -24,6 +27,13 @@ interface DocumentListProps {
   documents: Document[];
   loading: boolean;
   onRefresh: () => void;
+}
+
+// Extended Document interface to include blockchain data
+interface BlockchainDocument extends Document {
+  blockchain_tx_id?: string;
+  file_hash?: string;
+  blockchain_verified?: boolean;
 }
 
 export const DocumentList: React.FC<DocumentListProps> = ({ 
@@ -37,8 +47,11 @@ export const DocumentList: React.FC<DocumentListProps> = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  // Cast documents to include potential blockchain data
+  const blockchainDocuments = documents as BlockchainDocument[];
+
   // Filter documents based on search and type
-  const filteredDocuments = documents.filter(doc => {
+  const filteredDocuments = blockchainDocuments.filter(doc => {
     const matchesSearch = doc.document_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          doc.doctor_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          doc.file_name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -207,9 +220,19 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                       <h3 className="font-semibold text-white text-sm md:text-base truncate pr-2">
                         {document.document_name}
                       </h3>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getDocumentTypeColor(document.document_type)} mt-1 sm:mt-0 flex-shrink-0`}>
-                        {document.document_type}
-                      </span>
+                      <div className="flex items-center space-x-2 mt-1 sm:mt-0">
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getDocumentTypeColor(document.document_type)} flex-shrink-0`}>
+                          {document.document_type}
+                        </span>
+                        
+                        {/* Blockchain indicator */}
+                        {document.blockchain_tx_id && (
+                          <div className="flex items-center space-x-1">
+                            <Shield className="w-3 h-3 text-green-400" />
+                            <span className="text-xs text-green-400">Blockchain</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     {/* Mobile: Stack info vertically, Desktop: Grid layout */}
@@ -253,6 +276,14 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                         <span className="truncate">{document.report_center}</span>
                       </div>
                     )}
+
+                    {/* Blockchain hash display */}
+                    {document.file_hash && (
+                      <div className="flex items-center space-x-1 mt-1 text-xs text-slate-500">
+                        <Hash className="w-3 h-3 flex-shrink-0" />
+                        <span className="font-mono">Hash: {document.file_hash.substring(0, 16)}...</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -277,6 +308,16 @@ export const DocumentList: React.FC<DocumentListProps> = ({
                   >
                     <Download size={14} className="md:w-4 md:h-4" />
                   </Button>
+
+                  {/* Blockchain verification */}
+                  {document.blockchain_tx_id && document.file_hash && (
+                    <BlockchainVerification
+                      documentId={document.id}
+                      documentName={document.document_name}
+                      transactionId={document.blockchain_tx_id}
+                      fileHash={document.file_hash}
+                    />
+                  )}
                   
                   <Button
                     variant="ghost"
@@ -304,6 +345,16 @@ export const DocumentList: React.FC<DocumentListProps> = ({
           <p className="text-gray-600 dark:text-gray-300">
             Are you sure you want to delete "{selectedDocument?.document_name}"? This action cannot be undone.
           </p>
+          
+          {selectedDocument?.blockchain_tx_id && (
+            <div className="p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+              <p className="text-orange-700 dark:text-orange-300 text-sm">
+                <Shield className="w-4 h-4 inline mr-1" />
+                This document is stored on the blockchain. While the file will be deleted, 
+                the blockchain record will remain as permanent proof of existence.
+              </p>
+            </div>
+          )}
           
           <div className="flex justify-end space-x-3">
             <Button
