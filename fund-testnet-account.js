@@ -1,9 +1,8 @@
 const algosdk = require('algosdk');
 
-// Your account details (replace with the actual values from the previous script)
-// You'll need to update these with your actual account details
-const ACCOUNT_ADDRESS = "YOUR_ACCOUNT_ADDRESS_HERE";
-const ACCOUNT_MNEMONIC = "YOUR_25_WORD_MNEMONIC_HERE";
+// Your account details (updated with actual values)
+const ACCOUNT_ADDRESS = "ISKQJKIEYQRDJHPN4H2V4X7Q3U4WLQPB4XQPJG3MXJZB6YQRP65M";
+const ACCOUNT_MNEMONIC = "crash pond train sign around hawk very orient mix cinnamon space catch patch tongue engage milk rebel digital input soup pledge crime allow abstract smoke";
 
 // Algorand testnet configuration
 const algodToken = "";
@@ -87,11 +86,4 @@ async function checkAccountBalance() {
 }
 
 // Run the funding process
-if (ACCOUNT_ADDRESS === "YOUR_ACCOUNT_ADDRESS_HERE") {
-    console.log("⚠️ Please update the script with your actual account details:");
-    console.log("1. Replace ACCOUNT_ADDRESS with your address from generate-algorand-account.js");
-    console.log("2. Replace ACCOUNT_MNEMONIC with your 25-word mnemonic");
-    console.log("3. Run the script again");
-} else {
-    fundTestnetAccount();
-}
+fundTestnetAccount();
