@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light mode variables */
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --border: #e2e8f0;
+  --toast-bg: #ffffff;
+  --toast-color: #374151;
+  
+  /* Custom CSS variables for theme colors */
+  --color-primary: #F78970;
+  --color-primary-dark: #D8522C;
+  --color-secondary: #049E56;
+  --color-secondary-dark: #00663E;
+  
+  /* Light mode specific colors */
+  --card-bg: #f8fafc;
+  --card-border: #e2e8f0;
+  --sidebar-bg: #F78970;
+  --sidebar-hover: #e56a4d;
+  --sidebar-active: #D8522C;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+}
+
+.dark {
+  /* Dark mode variables */
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --border: #334155;
+  --toast-bg: #1f2937;
+  --toast-color: #f9fafb;
+  
+  /* Dark mode specific colors */
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --sidebar-bg: #D8522C;
+  --sidebar-hover: #b43d1e;
+  --sidebar-active: #93331c;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Focus styles for accessibility */
+.focus-visible {
+  @apply outline-none ring-2 ring-primary-500 ring-offset-2 dark:ring-offset-gray-900;
+}
